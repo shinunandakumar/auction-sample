@@ -4,6 +4,7 @@ package db
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -43,5 +44,6 @@ func Automigrate(db *sql.DB) {
 								end_date int
 							)`
 
-	_ = db.QueryRow(AdsCreateTable)
+	err := db.QueryRow(AdsCreateTable)
+	fmt.Println("err----------", err)
 }
