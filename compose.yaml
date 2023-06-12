@@ -1,0 +1,44 @@
+version: '3'
+
+services:
+  db:
+    image: mysql:5.7
+    volumes:
+      - ./db_data:/var/lib/mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: auctiondb
+      MYSQL_USER: auctiontest
+      MYSQL_PASSWORD: auctiontest
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+  demand-side:
+    image: auction/demand-side
+    build:
+      dockerfile: Dockerfile
+      context: ./demand-side
+    container_name: demand-side
+    volumes:
+      - ./demand-side:/go/src/demand-side
+    command: go run cmd/main.go
+    ports:
+      - 8001:8001
+    depends_on:
+      - db
+  supply-side:
+    image: auction/supply-side
+    build:
+      dockerfile: Dockerfile
+      context: ./supply-side
+    container_name: supply-side
+    volumes:
+      - ./supply-side:/go/src/supply-side
+    command: go run cmd/main.go
+    ports:
+      - 8002:8002
+    depends_on:
+      - db
